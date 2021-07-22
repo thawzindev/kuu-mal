@@ -1,0 +1,29 @@
+
+
+	img {
+		margin-top: -90px;
+	}
+
+	.container {
+		margin-top: 4rem !important;
+	} 
+
+	#note {
+		margin-bottom: 0px !important;
+
+	}
+
+	body {
+		background-image: url('../images/bk.jpg');
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+  		background-size: cover;
+	}
+
+    a {
+        text-decoration: none;
+    }
+
+	a:hover {
+		text-decoration: none;
+	}

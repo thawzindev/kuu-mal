@@ -57,7 +57,7 @@ const Home = () => {
                                 <Form.Label column sm="2">
                                 ဖုန်းနံပါတ်
                                 </Form.Label>
-                                <Col sm="8">
+                                <Col sm="8"> 
                                 <Form.Control autoComplete="off" type="number" placeholder="094250910490" />
                                 </Col>
                             </Form.Group>

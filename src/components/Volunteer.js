@@ -3,8 +3,9 @@ import Header from './includes/Header';
 import Footer from './includes/Footer';
 import HelpRequestCard from './cards/HelpRequestCard'
 import {Button, Container, Row, Col, Card, Form, FormGroup} from 'react-bootstrap';
+import VolunteerCard from './cards/VolunteerCard';
 
-const HelpRequestList = () => {
+const Volunteer = () => {
     return (
         <>
             <Container>
@@ -14,8 +15,7 @@ const HelpRequestList = () => {
 
                                 <Header/>
 
-                                <h4 className="text-left px-1 mt-2" style={{textAlign: 'left'}}><strong>အကူအညီတောင်းထားသူများ - (၁၆) ဦး</strong></h4>
-                                <p className="text-danger text-left px-1" style={{textAlign: 'left'}}>အကူအညီပေးပြီးပါက ID နဲ့တကွ Kuumal Facebook Page တွင်အကြောင်းကြားပေးပါရန်။</p>
+                                <h4 class="text-left px-1 mt-2" style={{textAlign: 'left'}}><strong>Volunteer အရေအတွက် - (၁၆) ဦး</strong></h4>
 
                                 <hr/>
 
@@ -55,12 +55,12 @@ const HelpRequestList = () => {
                                 </Form> 
                                 {/* end of form */}
 
-                                <HelpRequestCard/>
-                                <HelpRequestCard/>
-                                <HelpRequestCard/>
-                                <HelpRequestCard/>
-                                <HelpRequestCard/>
-                                <HelpRequestCard/>
+                                <VolunteerCard/>
+                                <VolunteerCard/>
+                                <VolunteerCard/>
+                                <VolunteerCard/>
+                                <VolunteerCard/>
+                                <VolunteerCard/>
 
 
                                 <Footer/>
@@ -73,4 +73,4 @@ const HelpRequestList = () => {
     )
 }
 
-export default HelpRequestList;
+export default Volunteer;

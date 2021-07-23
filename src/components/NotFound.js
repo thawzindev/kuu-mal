@@ -1,8 +1,32 @@
-import React from 'react';
+import Header from './includes/Header';
+import Footer from './includes/Footer';
+import {Button, Container, Row, Col, Card, Form} from 'react-bootstrap';
+import notFound from '../images/notfound.png'
+
 
 const NotFound = () => {
     return (
-        <h1>404</h1>
+        <>
+            <Container>
+                <Row className="justify-content-center">
+                        <Col md={10} lg={8} sm={12} className="text-center">
+                            <Card className="shadow p-3 mb-5 rounded">
+
+                                <Header/>
+
+                                <div className="text-center mt-3">
+                                    <img className="img-fluid" src={notFound} alt="Page not found" />
+                                </div>
+
+                                <Footer/>
+
+                                
+
+                            </Card>
+                        </Col>
+                </Row>
+            </Container>
+       </>
     )
 }
 

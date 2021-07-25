@@ -10,19 +10,20 @@ const VolunteerRegisterForm = () => {
     const states = JSON.parse(localStorage.getItem('states'))
 
     useEffect(async () => {
-        
+
         const townshipElement = document.querySelector('.township');
 
         townshipElement.length = 0;
        
-        const result = await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`);
-        // townshipElement.add(new Option('Text', 'value'))
+        if (stateId !== '') {
+            const result = await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`);
 
-        console.log(result.data);
-        
-        result.data.data.map(township => (
-            townshipElement.add(new Option(township.name, township.id))
-        ))
+            console.log(result.data);
+            
+            result.data.data.map(township => (
+                townshipElement.add(new Option(township.name, township.id))
+            ))
+        }
 
     }, [stateId]);
 
@@ -74,7 +75,7 @@ const VolunteerRegisterForm = () => {
                         </Form.Label>
                         <Col sm="8">
                         <Form.Select value={stateId} aria-label="Default select example" onChange={e => fetchTownship(e)}>
-                            <option disabled>ရွေးပါ</option>
+                            <option defaultValue={stateId} >ရွေးပါ</option>
                             {states.data.map(state => (
                                 <option key={state.id} value={state.id}>{state.name}</option>
                             ))}

@@ -10,7 +10,7 @@ const HelpRequestCard = () => {
 							<small>3 days ago</small>
                     </div>
                     <p className="mb-1">တအိမ်လုံးနေမကောင်းဖြစ်နေပါသဖြင့် စျေးဝယ်ပေးရန်အကူအညီလိုအပ်ပါသည်။</p>
-					<small>အန်တီမြင့်</small>
+					<small>အန်တီမြင့် ( 09425025593 )</small>
                 </Card.Body>
             </Card>
         </>

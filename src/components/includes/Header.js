@@ -13,7 +13,7 @@ const Header = () => {
     const location = useLocation();  
     const history = useHistory();
 
-    if(location.pathname !== '/') {
+    if (location.pathname !== '/') {
         return (
             <>
                 <div>

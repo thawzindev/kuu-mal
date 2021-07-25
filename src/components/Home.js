@@ -1,13 +1,25 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Button, Container, Row, Col, Card, Form} from 'react-bootstrap';
 import logo from '../images/kuumal.png';
 import Header from './includes/Header';
 import Footer from './includes/Footer';
 import MainCard from './includes/MainCard';
 import VolunteerRegisterForm from './includes/VolunteerRegisterForm';
+import axios from 'axios';
 
 
 const Home = () => {
+
+    useEffect(async () => {
+        const result = await axios(
+          'http://localhost:8000/api/states',
+        );
+     
+        localStorage.setItem('states', JSON.stringify(result.data));
+
+    }, []);
+
+
     return (
         <>
             <Container>

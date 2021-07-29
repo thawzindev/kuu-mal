@@ -1,12 +1,80 @@
-import React from 'react';
+import {useState, useEffect} from 'react';
 import Header from './includes/Header';
 import Footer from './includes/Footer';
 import HelpRequestCard from './cards/HelpRequestCard'
 import {Button, Container, Row, Col, Card, Form, FormGroup} from 'react-bootstrap';
 import {Link} from "react-router-dom";
+import axios from "axios";
 
 
 const HelpRequestForm = () => {
+
+    const [stateId, setStateId] = useState('');
+
+    const request = () => {
+        return {
+            'name' : '',
+            'phone' : '',
+            'state_id' : '',
+            'township_id' : '',
+            'address' : '',
+            'activities'  : '',
+        }
+    }
+
+    const [requestForm, setRequestForm] = useState(request());
+
+    const states = JSON.parse(localStorage.getItem('states'));
+
+    useEffect(async () => {
+
+        const townshipElement = document.querySelector('.township');
+
+        townshipElement.length = 0;
+       
+        if (stateId !== '') {
+            const result = await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`);
+
+            console.log(result.data);
+            townshipElement.add(new Option('All', ''))
+
+            result.data.data.map(township => (
+                townshipElement.add(new Option(township.name, township.id))
+            ))
+        }
+
+    }, [stateId]);
+
+    const handleStateIdOnChange = (e) => {
+
+        setStateId(e.target.value);
+
+        setRequestForm({
+            ...requestForm,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    const handleOnChange = (e) => {
+        setRequestForm({
+            ...requestForm,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    const handleOnSubmit = (e) => {
+        e.preventDefault();
+        console.log(requestForm);
+        axios.post('http://localhost:8000/api/help/request', requestForm)
+          .then(function (response) {
+            setRequestForm(request());
+            setStateId('');
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
+
     return (
         <>
             <Container>
@@ -30,14 +98,14 @@ const HelpRequestForm = () => {
 
                                 <hr/>
 
-                                <Form className="">
+                                <Form className="" onSubmit={e => handleOnSubmit(e)}>
 
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">
                                         အမည်
                                         </Form.Label>
                                         <Col sm="8">
-                                        <Form.Control placeholder="ဦးမောင်မောင်" />
+                                        <Form.Control value={requestForm.name} name="name" placeholder="ဦးမောင်မောင်"  onChange={e => handleOnChange(e)}/>
                                         </Col>
                                     </Form.Group>
 
@@ -46,7 +114,21 @@ const HelpRequestForm = () => {
                                         ဖုန်းနံပါတ်
                                         </Form.Label>
                                         <Col sm="8"> 
-                                        <Form.Control autoComplete="off" type="number" placeholder="094250910490" />
+                                        <Form.Control value={requestForm.phone} name="phone" autoComplete="off" type="number" placeholder="094250910490" onChange={e => handleOnChange(e)}/>
+                                        </Col>
+                                    </Form.Group>
+
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">
+                                        ပြည်နယ်/တိုင်း 
+                                        </Form.Label>
+                                        <Col sm="8">
+                                        <Form.Select value={stateId} name="state_id" aria-label="Default select example" onChange={e => handleStateIdOnChange(e)}>
+                                            <option defaultValue={stateId} >ရွေးပါ</option>
+                                            {states.data.map(state => (
+                                                <option key={state.id} value={state.id}>{state.name}</option>
+                                            ))}
+                                        </Form.Select>
                                         </Col>
                                     </Form.Group>
 
@@ -55,11 +137,8 @@ const HelpRequestForm = () => {
                                         မြို့နယ်
                                         </Form.Label>
                                         <Col sm="8">
-                                        <Form.Select aria-label="Default select example">
-                                            <option>All</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
+                                        <Form.Select value={requestForm.township_id} name="township_id" aria-label="Default select example" className="township" onChange={e => handleOnChange(e)}>
+                                            {/* <option defaultValue={requestForm.township_id}>ရွေးပါ</option> */}
                                         </Form.Select>
                                         </Col>
                                     </Form.Group>
@@ -69,7 +148,7 @@ const HelpRequestForm = () => {
                                         အကူအညီတောင်းလိုသောအရာများ
                                         </Form.Label>
                                         <Col sm="8">
-                                        <Form.Control as="textarea" rows={2} placeholder="နေမကောင်းပါသဖြင့် စျေးဝယ်ပေးရန် ... "/>
+                                        <Form.Control value={requestForm.activities} name="activities" as="textarea" rows={2} placeholder="နေမကောင်းပါသဖြင့် စျေးဝယ်ပေးရန် ... " onChange={e => handleOnChange(e)}/>
                                         </Col>
                                     </Form.Group>
 
@@ -78,14 +157,14 @@ const HelpRequestForm = () => {
                                         နေရပ်လိပ်စာ
                                         </Form.Label>
                                         <Col sm="8">
-                                        <Form.Control as="textarea" rows={2} placeholder="၁၂/က အနော်ရထာလမ်း ..."/>
+                                        <Form.Control value={requestForm.address} name="address" as="textarea" rows={2} placeholder="၁၂/က အနော်ရထာလမ်း ..." onChange={e => handleOnChange(e)}/>
                                         </Col>
                                     </Form.Group>
 
 
                                     <p className="text-danger text-center px-1">အကူအညီလိုသူများအတွက် ဖွင့်လှစ်ထားခြင်းဖြစ်ပါသဖြင့် မှန်ကန်သောအချက်အလက်များဖြည့်သွင်းရန်လိုအပ်ပါသည်။</p>
 
-                                    <Button variant="dark">ပေးပို့မည်။</Button>
+                                    <Button type="submit" variant="dark">ပေးပို့မည်။</Button>
                                 </Form>
 
 

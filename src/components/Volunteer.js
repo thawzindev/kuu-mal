@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import Header from './includes/Header';
 import Footer from './includes/Footer';
 import HelpRequestCard from './cards/HelpRequestCard'
-import {Button, Container, Row, Col, Card, Form, FormGroup} from 'react-bootstrap';
+import {Button, Container, Row, Col, Card, Form, FormGroup, Pagination} from 'react-bootstrap';
 import VolunteerCard from './cards/VolunteerCard';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const Volunteer = () => {
 
@@ -12,7 +14,6 @@ const Volunteer = () => {
 
     const search = () => {
         return {
-            'order_by' : '',
             'state_id' : '',
             'township_id' : '',
         }
@@ -20,7 +21,7 @@ const Volunteer = () => {
     
     const [searchForm, setSearchForm] = useState(search());
     const [stateId, setStateId] = useState('');
-    const [page, setPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
     const [volunteers, setVolunteer] = useState({});
 
     useEffect(async () => {
@@ -42,15 +43,16 @@ const Volunteer = () => {
     }, [stateId]);
 
     useEffect(async () => {
-        await axios.get(`http://localhost:8000/api/volunteers`)
+        await axios.get(`http://localhost:8000/api/volunteers?page=${currentPage}`)
           .then(function (response) {
               console.log(response.data)
-            setVolunteer(response.data)
+              setVolunteer(response.data)
+              setCurrentPage(response.data.meta.current_page)
           })
           .catch(function (error) {
             console.log(error);
           });
-    }, [page]);
+    }, [currentPage]);
 
     const handleStateIdOnChange = (e) => {
 
@@ -62,8 +64,22 @@ const Volunteer = () => {
         });
     }
 
-    const handleOnChange = (e) => {
+    const paginationOnChangeHandler = (e, action='') => {
+        switch (action) {
+            case 'next':
+                setCurrentPage(currentPage+1);
+                break;
+            case 'prev':
+                setCurrentPage(currentPage-1);
+                break;
+            default:
+                setCurrentPage(1);
+                break;
+        }
+    }
 
+    const handleOnChange = (e) => {
+        
     }
 
     return (
@@ -90,7 +106,7 @@ const Volunteer = () => {
                                                 <option value="1">Latest</option>
                                                 <option value="2">Newest</option>
                                             </Form.Select>
-                                        </Col> */}
+                                        </Col> */} 
 
                                         <Form.Label column sm="2"> ပြည်နယ်/တိုင်း - </Form.Label>
                                         <Col sm="2">
@@ -111,7 +127,7 @@ const Volunteer = () => {
 
                                         <Col sm="3">
                                         <Button variant='primary' type="submit">
-                                            ရှာမယ်။
+                                            ရှာမယ်။ 
                                         </Button>
                                         </Col>
                                         
@@ -123,6 +139,22 @@ const Volunteer = () => {
                                 {Object.keys(volunteers).length !== 0 ? volunteers.data.map(volunteer => (
                                     <VolunteerCard volunteer={volunteer} key={volunteer.id}/>
                                 )) : ''}
+
+                                <div className="d-flex w-100 flex-row-reverse px-2">
+
+                                    <Pagination>
+
+                                        <Pagination.Item onClick={(e => paginationOnChangeHandler(e, 'prev'))}>
+                                            <FontAwesomeIcon icon={ faChevronLeft }/> Prev
+                                        </Pagination.Item>
+
+                                        <Pagination.Item onClick={(e => paginationOnChangeHandler(e, 'next'))}>
+                                            Next <FontAwesomeIcon icon={ faChevronRight }/>
+                                        </Pagination.Item>
+
+                                    </Pagination>
+
+                                </div>
                         
 
 

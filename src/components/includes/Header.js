@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../../images/kuumal.png'
 import {Link} from "react-router-dom";
 import '../../styles/Header.css';
+import '../../styles/Home.css';
 import { useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -18,7 +19,7 @@ const Header = () => {
             <>
                 <div>
                     <Link to="/">
-                        <img src={logo} alt="" />
+                        <img src={logo} alt="" width="15%"/>
                     </Link>
                 </div>
     
@@ -33,7 +34,7 @@ const Header = () => {
     return (
         <>
             <div>
-                <img src={logo} alt="" />
+                <img src={logo} alt="" width="15%"/>
             </div>
 
         </>

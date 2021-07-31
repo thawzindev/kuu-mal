@@ -79,7 +79,24 @@ const Volunteer = () => {
     }
 
     const handleOnChange = (e) => {
-        
+        setSearchForm({
+            ...searchForm,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    const handleOnSubmit = async (e) => {
+        e.preventDefault();
+
+        await axios.get(`http://localhost:8000/api/volunteers?state_id=${searchForm.state_id}&township=${searchForm.township_id}&page=${currentPage}`)
+            .then(function (response) {
+                console.log(response.data)
+                setVolunteer(response.data)
+                setCurrentPage(response.data.meta.current_page)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     return (
@@ -97,7 +114,7 @@ const Volunteer = () => {
 
 
                                 {/* start of form */}
-                                <Form className="mb-3">
+                                <Form className="mb-3" onSubmit={e => handleOnSubmit(e)}>
 
                                     <FormGroup as={Row}>
                                         {/* <Form.Label column sm="1" className="px-1"> အမျိုးအစား - </Form.Label>

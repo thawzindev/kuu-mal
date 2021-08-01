@@ -49,6 +49,7 @@ const HelpRequestList = () => {
     }, [stateId]);
 
     useEffect(async () => {
+        setLoading(true);
         await axios.get(`http://localhost:8000/api/help/requests/list?page=${currentPage}`)
             .then(function (response) {
                 setLoading(false)

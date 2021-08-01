@@ -60,6 +60,7 @@ const Volunteer = () => {
     }, [stateId]);
 
     useEffect(async () => {
+        setLoading(true);
         await axios.get(`http://localhost:8000/api/volunteers?page=${currentPage}`)
           .then(function (response) {
               setLoading(false)

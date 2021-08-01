@@ -6,6 +6,8 @@ import {Button, Container, Row, Col, Card, Form, FormGroup, Pagination} from 're
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import ProgressBar from './ProgressBar'
+import Loader from './Loader';
 
 const HelpRequestList = () => {
 
@@ -18,6 +20,7 @@ const HelpRequestList = () => {
         }
     }
     
+    const [loading, setLoading] = useState(true);
     const [searchForm, setSearchForm] = useState(search());
     const [stateId, setStateId] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,14 +32,18 @@ const HelpRequestList = () => {
         townshipElement.length = 0;
 
         if (stateId !== '') {
-            const result = await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`);
-
-            console.log(result.data);
-            townshipElement.add(new Option('All', ''))
-
-            result.data.data.map(township => (
-                townshipElement.add(new Option(township.name, township.id))
-            ))
+            setLoading(true);
+            await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`)
+            .then(function (response) {
+                setLoading(false);
+                townshipElement.add(new Option('All', ''))
+                response.data.data.map(township => (
+                    townshipElement.add(new Option(township.name, township.id))
+                ))
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
 
     }, [stateId]);
@@ -44,8 +51,8 @@ const HelpRequestList = () => {
     useEffect(async () => {
         await axios.get(`http://localhost:8000/api/help/requests/list?page=${currentPage}`)
             .then(function (response) {
-                console.log(response.data)
-                setHelpRequest(response.data)
+                setLoading(false)
+                setHelpRequest(response)
                 setCurrentPage(response.data.meta.current_page)
           })
           .catch(function (error) {
@@ -100,6 +107,7 @@ const HelpRequestList = () => {
 
     return (
         <>
+            <ProgressBar isAnimating={loading}/>
             <Container>
                 <Row className="justify-content-center">
                         <Col md={10} lg={8} sm={12} className="text-center">
@@ -112,7 +120,6 @@ const HelpRequestList = () => {
 
                                 <hr/>
 
-
                                 {/* start of form */}
                                 <Form className="mb-3" onSubmit={e => handleOnSubmit(e)}>
 
@@ -120,7 +127,7 @@ const HelpRequestList = () => {
                                         <Form.Label column sm="2" className="px-1"> အမျိုးအစား - </Form.Label>
                                         <Col sm="3">
                                             <Form.Select value={stateId} name="state_id" aria-label="Default select example" onChange={e => handleStateIdOnChange(e)}>
-                                                <option defaultValue={stateId} >ရွေးပါ</option>
+                                                <option value='' >All</option>
                                                 {states.data.map(state => (
                                                     <option key={state.id} value={state.id}>{state.name}</option>
                                                 ))}
@@ -144,8 +151,10 @@ const HelpRequestList = () => {
 
                                 </Form> 
                                 {/* end of form */}
+                                
+                                {loading === true ? <Loader/> : ''}
 
-                                {Object.keys(helpRequests).length !== 0 ? helpRequests.data.map(help => (
+                                {Object.keys(helpRequests).length !== 0 ? helpRequests.data.data.map(help => (
                                     <HelpRequestCard help={help} key={help.id}/>
                                 )) : ''}
 
@@ -154,13 +163,17 @@ const HelpRequestList = () => {
 
                                 <Pagination>
 
-                                    <Pagination.Item onClick={(e => paginationOnChangeHandler(e, 'prev'))}>
-                                        <FontAwesomeIcon icon={ faChevronLeft }/> Prev
-                                    </Pagination.Item>
+                                    { Object.keys(helpRequests).length !== 0 ? 
+                                    <>
+                                        <Pagination.Item className={currentPage === 1 ? 'disabled' : ''} onClick={(e => paginationOnChangeHandler(e, 'prev'))}>
+                                            <FontAwesomeIcon icon={ faChevronLeft }/> Prev
+                                        </Pagination.Item>
 
-                                    <Pagination.Item onClick={(e => paginationOnChangeHandler(e, 'next'))}>
-                                        Next <FontAwesomeIcon icon={ faChevronRight }/>
-                                    </Pagination.Item>
+                                        <Pagination.Item className={currentPage === helpRequests.data.meta.last_page ? 'disabled' : ''} onClick={(e => paginationOnChangeHandler(e, 'next'))}>
+                                            Next <FontAwesomeIcon icon={ faChevronRight }/>
+                                        </Pagination.Item>
+                                        
+                                    </> : '' }
 
                                 </Pagination>
 

@@ -7,6 +7,18 @@ import VolunteerCard from './cards/VolunteerCard';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import ProgressBar from './ProgressBar';
+import Loader from './Loader';
+
+const styles = {
+    pagination : {
+        cursor: "pointer"  
+    },
+    disablePagination : {
+        onPointerEnter: "none",
+        color: "red"
+    }
+}
 
 const Volunteer = () => {
 
@@ -19,6 +31,7 @@ const Volunteer = () => {
         }
     }
     
+    const [loading, setLoading] = useState(true);
     const [searchForm, setSearchForm] = useState(search());
     const [stateId, setStateId] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -30,14 +43,18 @@ const Volunteer = () => {
         townshipElement.length = 0;
 
         if (stateId !== '') {
-            const result = await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`);
-
-            console.log(result.data);
-            townshipElement.add(new Option('All', ''))
-
-            result.data.data.map(township => (
-                townshipElement.add(new Option(township.name, township.id))
-            ))
+            setLoading(true);
+            await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`)
+            .then(function (response) {
+                setLoading(false);
+                townshipElement.add(new Option('All', ''))
+                response.data.data.map(township => (
+                    townshipElement.add(new Option(township.name, township.id))
+                ))
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         }
 
     }, [stateId]);
@@ -45,8 +62,8 @@ const Volunteer = () => {
     useEffect(async () => {
         await axios.get(`http://localhost:8000/api/volunteers?page=${currentPage}`)
           .then(function (response) {
-              console.log(response.data)
-              setVolunteer(response.data)
+              setLoading(false)
+              setVolunteer(response)
               setCurrentPage(response.data.meta.current_page)
           })
           .catch(function (error) {
@@ -87,10 +104,13 @@ const Volunteer = () => {
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
-        await axios.get(`http://localhost:8000/api/volunteers?state_id=${searchForm.state_id}&township=${searchForm.township_id}&page=${currentPage}`)
+        const url = `http://localhost:8000/api/volunteers?state_id=${searchForm.state_id}&township=${searchForm.township_id}&page=${currentPage}`;
+
+        await axios.get(url)
             .then(function (response) {
-                console.log(response.data)
+                setLoading(false)
                 setVolunteer(response.data)
                 setCurrentPage(response.data.meta.current_page)
             })
@@ -99,8 +119,11 @@ const Volunteer = () => {
             });
     }
 
+    console.log(volunteers.data)
+
     return (
         <>
+            <ProgressBar isAnimating={loading}/>
             <Container>
                 <Row className="justify-content-center">
                         <Col md={10} lg={8} sm={12} className="text-center">
@@ -128,7 +151,7 @@ const Volunteer = () => {
                                         <Form.Label column sm="2"> ပြည်နယ်/တိုင်း - </Form.Label>
                                         <Col sm="2">
                                             <Form.Select value={stateId} name="state_id" aria-label="Default select example" onChange={e => handleStateIdOnChange(e)}>
-                                                <option defaultValue={stateId} >ရွေးပါ</option>
+                                                <option value=''>All</option>
                                                 {states.data.map(state => (
                                                     <option key={state.id} value={state.id}>{state.name}</option>
                                                 ))}
@@ -153,25 +176,31 @@ const Volunteer = () => {
                                 </Form> 
                                 {/* end of form */}
 
-                                {Object.keys(volunteers).length !== 0 ? volunteers.data.map(volunteer => (
+                                {loading === true ? <Loader/> : ''}
+
+                                {Object.keys(volunteers).length !== 0 ? volunteers.data.data.map(volunteer => (
                                     <VolunteerCard volunteer={volunteer} key={volunteer.id}/>
                                 )) : ''}
 
-                                <div className="d-flex w-100 flex-row-reverse px-2">
+                                    <div className="d-flex w-100 flex-row-reverse px-2">
 
                                     <Pagination>
 
-                                        <Pagination.Item onClick={(e => paginationOnChangeHandler(e, 'prev'))}>
+                                    { Object.keys(volunteers).length !== 0 ? 
+                                    <>
+                                        <Pagination.Item className={currentPage === 1 ? 'disabled' : ''} onClick={(e => paginationOnChangeHandler(e, 'prev'))}>
                                             <FontAwesomeIcon icon={ faChevronLeft }/> Prev
                                         </Pagination.Item>
 
-                                        <Pagination.Item onClick={(e => paginationOnChangeHandler(e, 'next'))}>
+                                        <Pagination.Item className={currentPage === volunteers.data.meta.last_page ? 'disabled' : ''} onClick={(e => paginationOnChangeHandler(e, 'next'))}>
                                             Next <FontAwesomeIcon icon={ faChevronRight }/>
                                         </Pagination.Item>
+                                        
+                                    </> : '' }
 
                                     </Pagination>
 
-                                </div>
+                                    </div>
                         
 
 

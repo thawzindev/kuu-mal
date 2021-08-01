@@ -6,22 +6,27 @@ import Footer from './includes/Footer';
 import MainCard from './includes/MainCard';
 import VolunteerRegisterForm from './includes/VolunteerRegisterForm';
 import axios from 'axios';
-
+import ProgressBar from './ProgressBar'
 
 const Home = () => {
 
-    useEffect(async () => {
-        const result = await axios(
-          'http://localhost:8000/api/states',
-        );
-     
-        localStorage.setItem('states', JSON.stringify(result.data));
+    const [loading, setLoading] = useState(false);
 
-    }, []);
+    const states = localStorage.getItem('states');
 
+    if (!states) {
+        axios.get('http://localhost:8000/api/states')
+            .then(function (response) {
+                localStorage.setItem('states', JSON.stringify(response.data));
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
         <>
+            <ProgressBar isAnimating={loading}/>
             <Container>
                 <Row className="justify-content-center">
                         <Col md={10} lg={8} sm={12} className="text-center">

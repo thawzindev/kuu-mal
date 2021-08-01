@@ -1,7 +1,6 @@
 import {Button, Container, Row, Col, Card, Form, FormGroup} from 'react-bootstrap';
 
 const VolunteerCard = (props) => {
-    console.log(props.volunteer)
     return (
         <>
             <Card className="mb-3 shadow">

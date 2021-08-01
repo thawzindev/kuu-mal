@@ -3,11 +3,13 @@ import logo from '../../images/kuumal.png'
 import {Link} from "react-router-dom";
 import '../../styles/Header.css';
 import '../../styles/Home.css';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router';
-
+import Loading from '../Loading';
+import ProgressBar from '../ProgressBar'
 
 const Header = () => {
 
@@ -36,7 +38,6 @@ const Header = () => {
             <div>
                 <img src={logo} alt="" width="15%"/>
             </div>
-
         </>
     );
 }

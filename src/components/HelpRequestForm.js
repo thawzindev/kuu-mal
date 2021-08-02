@@ -5,7 +5,9 @@ import HelpRequestCard from './cards/HelpRequestCard'
 import {Button, Container, Row, Col, Card, Form, FormGroup} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import axios from "axios";
-
+import ProgressBar from './ProgressBar'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HelpRequestForm = () => {
 
@@ -22,6 +24,7 @@ const HelpRequestForm = () => {
         }
     }
 
+    const [loading, setLoading] = useState(false);
     const [requestForm, setRequestForm] = useState(request());
 
     const states = JSON.parse(localStorage.getItem('states'));
@@ -63,12 +66,16 @@ const HelpRequestForm = () => {
     }
 
     const handleOnSubmit = (e) => {
+        setLoading(true);
         e.preventDefault();
         console.log(requestForm);
         axios.post('http://localhost:8000/api/help/request', requestForm)
           .then(function (response) {
             setRequestForm(request());
             setStateId('');
+
+            toast.success("အကူအညီတောင်းခြင်း အောင်မြင်ပါသည်။");
+            setLoading(false);
           })
           .catch(function (error) {
             console.log(error);
@@ -77,7 +84,19 @@ const HelpRequestForm = () => {
 
     return (
         <>
+            <ProgressBar isAnimating={loading}/>
             <Container>
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
                 <Row className="justify-content-center">
                         <Col md={10} lg={8} sm={12} className="text-center">
                             <Card className="shadow p-3 mb-5 rounded">

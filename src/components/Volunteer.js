@@ -43,10 +43,8 @@ const Volunteer = () => {
         townshipElement.length = 0;
 
         if (stateId !== '') {
-            setLoading(true);
             await axios.get(`http://localhost:8000/api/townships?state_id=${stateId}`)
             .then(function (response) {
-                setLoading(false);
                 townshipElement.add(new Option('All', ''))
                 response.data.data.map(township => (
                     townshipElement.add(new Option(township.name, township.id))

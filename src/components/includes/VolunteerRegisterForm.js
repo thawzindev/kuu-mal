@@ -2,6 +2,9 @@ import {Button, Container, Row, Col, Card, Form} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
+import ProgressBar from '../ProgressBar'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const VolunteerRegisterForm = () => {
 
@@ -18,6 +21,7 @@ const VolunteerRegisterForm = () => {
         }
     }
 
+    const [loading, setLoading] = useState(false);
     const [volunteerForm, setVolunteerForm] = useState(volunteer());
 
     const states = JSON.parse(localStorage.getItem('states'))
@@ -39,8 +43,6 @@ const VolunteerRegisterForm = () => {
             ))
         }
 
-        console.log(volunteerForm)
-
     }, [stateId]);
 
     const handleOnChange = (e) => {
@@ -61,13 +63,16 @@ const VolunteerRegisterForm = () => {
     }
 
     const handleOnSubmit = (e) => {
+        setLoading(true);
         e.preventDefault();
-        console.log(volunteer);
 
         axios.post('http://localhost:8000/api/volunteer/create', volunteerForm)
           .then(function (response) {
             setVolunteerForm(volunteer());
             setStateId('');
+
+            toast.success("အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်။");
+            setLoading(false);
           })
           .catch(function (error) {
             console.log(error);
@@ -77,6 +82,18 @@ const VolunteerRegisterForm = () => {
 
     return (
         <>
+            <ProgressBar isAnimating={loading}/>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <a className="mb-2 px-3" style={{textAlign: "right"}} href="#">Volunteer Login</a>
             <p className="text-danger">အကူအညီပေးလိုသော volunteer များစာရင်းပေးရန်။ (volunteer အဖြစ်စာရင်းပေးသွင်းထားပါက login ဝင်ပြီး မိမိမြို့နယ်အတွင်းရှိ အကူအညီတောင်းထားသူများ စာရင်းကို အလွယ်တကူကြည့်ရှူနိုင်ပါသည်။)</p>
 

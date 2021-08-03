@@ -14,7 +14,7 @@ const NotFound = () => {
 
                                 <Header/>
 
-                                <div className="text-center mt-3">
+                                <div className="text-center mt-5">
                                     <img className="img-fluid" src={notFound} alt="Page not found" />
                                 </div>
 

@@ -5,6 +5,8 @@ import axios from 'axios';
 import ProgressBar from '../ProgressBar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {Link} from "react-router-dom";
+
 
 const VolunteerRegisterForm = () => {
 
@@ -75,7 +77,9 @@ const VolunteerRegisterForm = () => {
             setLoading(false);
           })
           .catch(function (error) {
-            console.log(error);
+            toast.error(error.response.data.message);
+            setLoading(false);
+            // console.log(error.response.data.message);
           });
     }
 
@@ -94,7 +98,8 @@ const VolunteerRegisterForm = () => {
                 draggable
                 pauseOnHover
             />
-            <a className="mb-2 px-3" style={{textAlign: "right"}} href="#">Volunteer Login</a>
+            {/* <a className="mb-2 px-3" style={{textAlign: "right"}} href="#">Volunteer Login</a> */}
+            <Link className="mb-2 px-3" style={{textAlign: "right"}} to="volunteer/login">Volunteer Login</Link>
             <p className="text-danger">အကူအညီပေးလိုသော volunteer များစာရင်းပေးရန်။ (volunteer အဖြစ်စာရင်းပေးသွင်းထားပါက login ဝင်ပြီး မိမိမြို့နယ်အတွင်းရှိ အကူအညီတောင်းထားသူများ စာရင်းကို အလွယ်တကူကြည့်ရှူနိုင်ပါသည်။)</p>
 
                 <Form className="" onSubmit={e => handleOnSubmit(e)}>

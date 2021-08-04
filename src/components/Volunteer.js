@@ -110,15 +110,13 @@ const Volunteer = () => {
         await axios.get(url)
             .then(function (response) {
                 setLoading(false)
-                setVolunteer(response.data)
+                setVolunteer(response)
                 setCurrentPage(response.data.meta.current_page)
             })
             .catch(function (error) {
                 console.log(error);
             });
     }
-
-    console.log(volunteers.data)
 
     return (
         <>

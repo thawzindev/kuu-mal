@@ -95,8 +95,7 @@ const HelpRequestList = () => {
 
         await axios.get(`http://localhost:8000/api/help/requests/list?state_id=${searchForm.state_id}&township=${searchForm.township_id}&page=${currentPage}`)
             .then(function (response) {
-                console.log(response.data)
-                setHelpRequest(response.data)
+                setHelpRequest(response)
                 setCurrentPage(response.data.meta.current_page)
             })
             .catch(function (error) {

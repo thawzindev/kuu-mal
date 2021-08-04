@@ -10,7 +10,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CryptoJS from 'crypto-js';
 import { Redirect } from 'react-router-dom';
-import BootstrapSwitchButton from 'bootstrap-switch-button-react'
+import BootstrapSwitchButton from 'bootstrap-switch-button-react';
+import '../styles/Switch.css';
+import Switch from './includes/Switch';
 
 
 const VolunteerProfile = () => {
@@ -66,6 +68,11 @@ const VolunteerProfile = () => {
         }
 
     }, []);
+
+    const logOut = (e) => {
+        localStorage.removeItem('volunteer');
+        history.push('/');
+    }
     
     const handleOnChange = (e) => {
         setVolunteer({
@@ -79,9 +86,11 @@ const VolunteerProfile = () => {
             ...volunteer,
             "active" : !volunteer.active
         });
+        console.log(volunteer.active)
     }
 
     const handleOnSubmit = (e) => {
+
         setLoading(true);
         e.preventDefault();
 
@@ -90,10 +99,12 @@ const VolunteerProfile = () => {
         axios.post('http://localhost:8000/api/volunteer/profile/update', volunteer, {
             headers: {
                     'Authorization': `bearer ${decryptedData.access_token}`,
-                    'Content-Type' : 'application/json'
+                    'Content-Type' : 'application/json',
+                    'Accept' : 'application/json'
                 }
             })
           .then(function (response) {
+            toast.success("လုပ်ဆောင်ချက်အောင်မြင်ပါသည်။");
             console.log(response)
             setLoading(false);
           })
@@ -102,15 +113,15 @@ const VolunteerProfile = () => {
             setLoading(false);
           });
     }
-
     
     return (
         <>
+        
             <ProgressBar isAnimating={loading}/>
             <Container>
                 <ToastContainer
                     position="top-right"
-                    autoClose={1000}
+                    autoClose={3000}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick
@@ -133,7 +144,7 @@ const VolunteerProfile = () => {
                                         <h4 className="text-left px-1 mt-2" style={{textAlign: 'left'}}><strong>Profile</strong></h4>
                                     </Col>
                                     <Col style={{textAlign: 'right'}}>
-                                        <a className="btn btn-warning" >Logout</a>
+                                        <a onClick={e => logOut()} className="btn btn-warning" >Logout</a>
                                     </Col>
                                 </Row>
 
@@ -182,7 +193,8 @@ const VolunteerProfile = () => {
                                         အခြေအနေ
                                         </Form.Label>
                                         <Col sm="8" style={{textAlign: "left"}}>
-                                        <BootstrapSwitchButton checked={volunteer.active === 1 ? true : false} onChange={e => activeHandleOnChange(e)}/>
+
+                                        <Switch name="active" isChecked={volunteer.active} func={e => activeHandleOnChange(e)}/>
 
                                         </Col>
                                     </Form.Group> 
@@ -198,7 +210,7 @@ const VolunteerProfile = () => {
                 </Row>
             </Container>
         </>
-    )
+    );
 }
 
 export default VolunteerProfile;

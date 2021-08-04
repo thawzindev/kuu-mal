@@ -24,6 +24,7 @@ const VolunteerRegisterForm = () => {
     }
 
     const [loading, setLoading] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [volunteerForm, setVolunteerForm] = useState(volunteer());
 
     const states = JSON.parse(localStorage.getItem('states'))
@@ -46,6 +47,13 @@ const VolunteerRegisterForm = () => {
         }
 
     }, [stateId]);
+
+    useEffect(async () => {
+
+        const volunteer = localStorage.getItem('volunteer');
+        volunteer ? setIsLoggedIn(true) : setIsLoggedIn(false);
+
+    }, []);
 
     const handleOnChange = (e) => {
         setVolunteerForm({
@@ -98,9 +106,12 @@ const VolunteerRegisterForm = () => {
                 draggable
                 pauseOnHover
             />
-            {/* <a className="mb-2 px-3" style={{textAlign: "right"}} href="#">Volunteer Login</a> */}
-            <Link className="mb-2 px-3" style={{textAlign: "right"}} to="volunteer/login">Volunteer Login</Link>
-            <p className="text-danger">အကူအညီပေးလိုသော volunteer များစာရင်းပေးရန်။ (volunteer အဖြစ်စာရင်းပေးသွင်းထားပါက login ဝင်ပြီး မိမိမြို့နယ်အတွင်းရှိ အကူအညီတောင်းထားသူများ စာရင်းကို အလွယ်တကူကြည့်ရှူနိုင်ပါသည်။)</p>
+            
+            { isLoggedIn === false ? 
+                    <Link className="mb-2 px-3" style={{textAlign: "right"}} to="volunteer/login">Volunteer Login</Link> 
+            : '' }
+
+            <p className="text-danger">အကူအညီပေးလိုသော volunteer များစာရင်းပေးရန်။</p>
 
                 <Form className="" onSubmit={e => handleOnSubmit(e)}>
 
